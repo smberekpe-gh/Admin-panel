@@ -1,1 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Panel</title>
+  <style>
+    body { font-family: Arial; margin: 20px; }
+    h2 { margin-top: 40px; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background: #f4f4f4; }
+    input, select { padding: 5px; margin: 2px; }
+    button { padding: 5px 10px; }
+    img { width: 50px; }
+  </style>
+</head>
+<body>
+  <h1>Admin Panel</h1>
 
+  <h2>Add New Product</h2>
+  <form method="POST" action="/admin/products?key=secret123">
+    <input type="text" name="name" placeholder="Product Name" required>
+    <input type="number" name="price" placeholder="Price" required>
+    <input type="text" name="description" placeholder="Description" required>
+    <input type="text" name="image" placeholder="Image URL" required>
+    <button type="submit">Add Product</button>
+  </form>
+
+  <h2>All Products</h2>
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Price</th>
+      <th>Description</th>
+      <th>Image</th>
+    </tr>
+    <% products.forEach(p => { %>
+      <tr>
+        <td><%= p.name %></td>
+        <td>₦<%= p.price %></td>
+        <td><%= p.description %></td>
+        <td><img src="<%= p.image %>"></td>
+      </tr>
+    <% }) %>
+  </table>
+
+  <h2>All Orders</h2>
+  <table>
+    <tr>
+      <th>Customer</th>
+      <th>Email</th>
+      <th>Products</th>
+      <th>Total</th>
+      <th>Status</th>
+      <th>Update Status</th>
+    </tr>
+    <% orders.forEach(order => { %>
+      <tr>
+        <td><%= order.customerName %></td>
+        <td><%= order.email %></td>
+        <td>
+          <% order.products.forEach(p => { %>
+            <div><%= p.name %> x <%= p.quantity %></div>
+          <% }) %>
+        </td>
+        <td>₦<%= order.total %></td>
+        <td><%= order.status %></td>
+        <td>
+          <form method="POST" action="/admin/orders/<%= order._id %>?key=secret123">
+            <select name="status">
+              <option <%= order.status==='pending'?'selected':'' %>>pending</option>
+              <option <%= order.status==='paid'?'selected':'' %>>paid</option>
+              <option <%= order.status==='shipped'?'selected':'' %>>shipped</option>
+              <option <%= order.status==='delivered'?'selected':'' %>>delivered</option>
+            </select>
+            <button type="submit">Update</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  </table>
+</body>
+</html>
